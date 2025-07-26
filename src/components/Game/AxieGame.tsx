@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useAccount, useWriteContract, useBalance } from "wagmi";
 import { sepolia } from "wagmi/chains";
 import { parseEther, formatEther } from "viem";
@@ -90,13 +90,52 @@ export default function AxieGame() {
   });
   const [mute, setMute] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('axieGameMute') === '1';
+      const savedMute = localStorage.getItem('axieGameMute');
+      // Default to unmuted (false) if no setting is saved
+      return savedMute === '1';
     }
-    return false;
+    return false; // Default to unmuted
   });
   const [statusKey, setStatusKey] = useState(0);
   const [selectedConfig, setSelectedConfig] = useState(0);
   const [layoutBlocks, setLayoutBlocks] = useState(gameConfigs[0].blocks);
+  const [lastActivityTime, setLastActivityTime] = useState(Date.now());
+  const autoRestartTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Debug effect to check mute state
+  useEffect(() => {
+    console.log('Mute state:', mute);
+  }, [mute]);
+
+  // Auto-restart timer effect
+  useEffect(() => {
+    const resetTimer = () => {
+      if (autoRestartTimeoutRef.current) {
+        clearTimeout(autoRestartTimeoutRef.current);
+      }
+      
+      // Only start timer if game is not active and there are revealed blocks
+      const hasRevealedBlocks = Object.keys(revealed).length > 0;
+      if (!gameActive && hasRevealedBlocks && !lost && !won) {
+        autoRestartTimeoutRef.current = setTimeout(() => {
+          handleRestart();
+        }, 15000); // 15 seconds
+      }
+    };
+
+    resetTimer();
+
+    return () => {
+      if (autoRestartTimeoutRef.current) {
+        clearTimeout(autoRestartTimeoutRef.current);
+      }
+    };
+  }, [lastActivityTime, gameActive, revealed, lost, won]);
+
+  // Update activity time on any user interaction
+  const updateActivity = () => {
+    setLastActivityTime(Date.now());
+  };
 
   // Update layout blocks when config changes
   React.useEffect(() => {
@@ -105,6 +144,7 @@ export default function AxieGame() {
 
   // Function to shuffle game configuration
   const handleShuffle = () => {
+    updateActivity();
     if (!gameActive) {
       const randomConfig = Math.floor(Math.random() * gameConfigs.length);
       setSelectedConfig(randomConfig);
@@ -125,7 +165,17 @@ export default function AxieGame() {
 
   // Only play sounds if not muted
   const playSound = (ref: React.RefObject<HTMLAudioElement>) => {
-    if (!mute && ref.current) ref.current.play();
+    if (!mute && ref.current) {
+      try {
+        // Reset audio to beginning and play
+        ref.current.currentTime = 0;
+        ref.current.play().catch(error => {
+          console.log('Audio play failed:', error);
+        });
+      } catch (error) {
+        console.log('Sound play error:', error);
+      }
+    }
   };
 
   // Check Sepolia ETH balance
@@ -153,6 +203,7 @@ export default function AxieGame() {
   }, []);
 
   const handleBet = () => {
+    updateActivity();
     if (!isConnected) {
       setStatus("Please connect your wallet first.");
       return;
@@ -174,6 +225,7 @@ export default function AxieGame() {
   };
 
   const handleBlockClick = (level: number, blockIdx: number) => {
+    updateActivity();
     if (!gameActive || lost || won) return;
     if (level !== currentLevel) return;
     if (revealed[level] !== undefined) return;
@@ -205,7 +257,6 @@ export default function AxieGame() {
         const newStats = getLocalStats();
         newStats.games.push({ win: true, multiplier: multipliers[currentLevel], date: Date.now() });
         newStats.leaderboard.push({ address: generateRandomAddress(), multiplier: multipliers[currentLevel], date: Date.now() });
-        saveLocalStats(newStats);
         setStats(newStats);
       } else {
         setCurrentLevel(level + 1);
@@ -225,6 +276,7 @@ export default function AxieGame() {
   };
 
   const handleCashOut = () => {
+    updateActivity();
     setStatus("Cashing out...");
     setGameActive(false);
     setCanCashOut(false);
@@ -287,6 +339,7 @@ export default function AxieGame() {
   };
 
   const handleRestart = () => {
+    updateActivity();
     setGameActive(false);
     setCurrentLevel(0);
     setBombIndexes([]);
