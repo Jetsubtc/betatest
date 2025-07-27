@@ -275,6 +275,24 @@ export default function AxieGame() {
     }
   };
 
+  // Mobile touch event handler with better touch feedback
+  const handleBlockTouch = (level: number, blockIdx: number, event: React.TouchEvent) => {
+    event.preventDefault(); // Prevent default touch behavior
+    event.stopPropagation(); // Stop event bubbling
+    
+    // Add visual feedback for touch
+    const target = event.currentTarget as HTMLElement;
+    target.style.transform = 'scale(0.95)';
+    target.style.transition = 'transform 0.1s ease';
+    
+    setTimeout(() => {
+      target.style.transform = '';
+      target.style.transition = '';
+    }, 100);
+    
+    handleBlockClick(level, blockIdx);
+  };
+
   const handleCashOut = () => {
     updateActivity();
     setStatus("Cashing out...");
@@ -543,6 +561,20 @@ export default function AxieGame() {
                         if (!lost && !won && level === currentLevel && revealed[level] === undefined) {
                           handleBlockClick(level, j);
                         }
+                      }}
+                      onTouchStart={(e) => {
+                        if (!isConnected) return;
+                        if (!gameActive) {
+                          setStatus("Please place a bet first.");
+                          setStatusKey(Date.now());
+                          return;
+                        }
+                        if (!lost && !won && level === currentLevel && revealed[level] === undefined) {
+                          handleBlockTouch(level, j, e);
+                        }
+                      }}
+                      onTouchEnd={(e) => {
+                        e.preventDefault();
                       }}
                     >
                       <img src={bomb === j && (lost || revealed[level] === j) ? "/images/sea urchin.png" : "/images/axie.png"} alt={bomb === j ? "Bomb" : "Axie"} />

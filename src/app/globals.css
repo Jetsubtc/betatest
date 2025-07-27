@@ -757,3 +757,260 @@ body {
     padding: 8px 16px;
   }
 }
+
+/* ===== ENHANCED MOBILE RESPONSIVE STYLES ===== */
+
+/* Mobile touch optimizations */
+@media (max-width: 768px) {
+  /* Prevent text selection and improve touch */
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Optimize for mobile screens */
+  html, body {
+    overflow-x: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Mobile-friendly container */
+  .container {
+    padding: 8px 6px 100px;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Mobile-optimized blocks */
+  .block {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    min-height: 44px; /* Touch target minimum */
+  }
+
+  .blocks {
+    gap: 8px;
+    justify-content: center;
+  }
+
+  /* Mobile menu bar */
+  .menu-bar {
+    height: 56px;
+    padding: 8px 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  /* Mobile bottom box */
+  .bottom-box {
+    width: 100%;
+    max-width: 400px;
+    height: 90px;
+    padding: 12px 16px;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .balance-info {
+    font-size: 16px;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* Mobile buttons */
+  .btn, .btn-claim, #restartBtn {
+    min-height: 44px;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 22px;
+    touch-action: manipulation;
+  }
+
+  /* Mobile multiplier labels */
+  .multiplier-label {
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  /* Mobile floating info */
+  #floatingInfoBox {
+    top: 70px;
+    font-size: 14px;
+    padding: 10px 18px;
+    max-width: 90%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* Mobile modals */
+  .win-modal, .lose-modal {
+    padding: 24px 32px;
+    font-size: 1.5rem;
+    max-width: 90%;
+    margin: 20px;
+  }
+
+  .win-text, .lose-text {
+    font-size: 1.8em;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .block {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+  }
+
+  .blocks {
+    gap: 6px;
+  }
+
+  .menu-bar {
+    height: 52px;
+    padding: 6px 10px;
+  }
+
+  .bottom-box {
+    height: 85px;
+    padding: 10px 12px;
+  }
+
+  .balance-info {
+    font-size: 14px;
+    gap: 16px;
+  }
+
+  .btn, .btn-claim, #restartBtn {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  .multiplier-label {
+    font-size: 12px;
+  }
+
+  #floatingInfoBox {
+    font-size: 13px;
+    padding: 8px 16px;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 360px) {
+  .block {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+  }
+
+  .blocks {
+    gap: 4px;
+  }
+
+  .balance-info {
+    font-size: 13px;
+    gap: 12px;
+  }
+
+  .btn, .btn-claim, #restartBtn {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+}
+
+/* Landscape mobile optimization */
+@media (max-width: 768px) and (orientation: landscape) {
+  .container {
+    height: calc(100vh - 50px);
+    padding: 4px 6px 80px;
+  }
+
+  .menu-bar {
+    height: 48px;
+  }
+
+  .bottom-box {
+    height: 70px;
+    padding: 8px 12px;
+  }
+
+  .balance-info {
+    font-size: 14px;
+    gap: 16px;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Remove hover effects on touch devices */
+  .block:hover,
+  .btn:hover,
+  .btn-claim:hover,
+  #restartBtn:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Active state for touch feedback */
+  .block:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+  }
+
+  .btn:active,
+  .btn-claim:active,
+  #restartBtn:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .block {
+    box-shadow: inset 0 0 4px rgba(255,255,255,0.1), 0 4px 8px rgba(0,0,0,0.4);
+  }
+}
+
+/* Safe area support for notched devices */
+@supports (padding: max(0px)) {
+  .menu-bar {
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
+  
+  .bottom-box {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .menu-bar {
+    background: rgba(20, 20, 20, 0.4);
+  }
+  
+  .bottom-box {
+    background: rgba(20, 20, 20, 0.9);
+  }
+}

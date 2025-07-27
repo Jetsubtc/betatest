@@ -440,3 +440,271 @@
   color: #222;
 }
 
+/* ===== MOBILE RESPONSIVE STYLES ===== */
+
+/* Base mobile adjustments */
+@media (max-width: 768px) {
+  /* General mobile optimizations */
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Touch-friendly button sizes */
+  button, .sound-toggle-btn, #menuButton {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px 16px;
+    font-size: 1rem;
+    border-radius: 12px;
+    touch-action: manipulation;
+  }
+
+  /* Menu bar mobile layout */
+  .menu-bar {
+    height: 64px;
+    padding: 0 12px;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .menu-left {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  /* Warning text mobile */
+  .bet-warning-text {
+    font-size: 1.1rem;
+    margin: 12px 0 8px 0;
+    padding: 0 8px;
+  }
+
+  /* Sound toggle mobile */
+  .sound-toggle-btn {
+    font-size: 0.9rem;
+    padding: 10px 14px;
+    margin-left: 8px;
+  }
+
+  .sound-toggle-btn .sound-icon {
+    width: 1.6em;
+    height: 1.6em;
+    font-size: 1em;
+  }
+
+  /* Menu sections mobile */
+  .menu-section {
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+  }
+
+  .menu-section-header {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+
+  .leaderboard-item,
+  .history-item {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+
+  .leaderboard-address {
+    font-size: 0.75rem;
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Faucet modal mobile */
+  .faucet-content {
+    padding: 24px 20px;
+    margin: 20px;
+    max-width: 90%;
+  }
+
+  .faucet-content h3 {
+    font-size: 1.3rem;
+  }
+
+  .faucet-content p {
+    font-size: 0.9rem;
+  }
+
+  .faucet-link {
+    padding: 14px 16px;
+    font-size: 0.9rem;
+  }
+
+  .close-btn {
+    padding: 12px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  /* Even smaller touch targets for very small screens */
+  button, .sound-toggle-btn, #menuButton {
+    min-height: 48px;
+    min-width: 48px;
+    padding: 14px 18px;
+    font-size: 0.95rem;
+  }
+
+  /* Compact menu layout */
+  .menu-bar {
+    height: 72px;
+    padding: 0 8px;
+  }
+
+  .menu-left {
+    gap: 6px;
+  }
+
+  /* Smaller warning text */
+  .bet-warning-text {
+    font-size: 1rem;
+    margin: 10px 0 6px 0;
+  }
+
+  /* Compact menu sections */
+  .menu-section {
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  .menu-section-header {
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+  }
+
+  .leaderboard-item,
+  .history-item {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
+
+  .leaderboard-address {
+    max-width: 60px;
+    font-size: 0.7rem;
+  }
+
+  /* Smaller faucet modal */
+  .faucet-content {
+    padding: 20px 16px;
+    margin: 16px;
+  }
+
+  .faucet-content h3 {
+    font-size: 1.2rem;
+  }
+
+  .faucet-content p {
+    font-size: 0.85rem;
+  }
+}
+
+/* Landscape mobile optimization */
+@media (max-width: 768px) and (orientation: landscape) {
+  .menu-bar {
+    height: 56px;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .menu-left {
+    flex-direction: row;
+    width: auto;
+  }
+
+  .bet-warning-text {
+    font-size: 1rem;
+    margin: 8px 0 4px 0;
+  }
+}
+
+/* Touch interaction improvements */
+@media (hover: none) and (pointer: coarse) {
+  /* Remove hover effects on touch devices */
+  button:hover,
+  .sound-toggle-btn:hover,
+  #menuButton:hover,
+  .menu-section:hover,
+  .leaderboard-item:hover,
+  .history-item:hover,
+  .faucet-link:hover,
+  .close-btn:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Active state for touch feedback */
+  button:active,
+  .sound-toggle-btn:active,
+  #menuButton:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+  }
+
+  .menu-section:active,
+  .leaderboard-item:active,
+  .history-item:active {
+    transform: translateX(1px);
+    transition: transform 0.1s ease;
+  }
+
+  .faucet-link:active,
+  .close-btn:active {
+    transform: translateY(1px);
+    transition: transform 0.1s ease;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .sound-toggle-btn .sound-icon,
+  .leaderboard-rank .rank-number {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+}
+
+/* Dark mode support for mobile */
+@media (prefers-color-scheme: dark) {
+  .menu-section {
+    background: rgba(255,255,255,0.02);
+  }
+  
+  .leaderboard-item,
+  .history-item {
+    background: rgba(255,255,255,0.03);
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Safe area support for notched devices */
+@supports (padding: max(0px)) {
+  .menu-bar {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+  
+  .faucet-content {
+    margin-left: max(20px, env(safe-area-inset-left));
+    margin-right: max(20px, env(safe-area-inset-right));
+  }
+}
+
