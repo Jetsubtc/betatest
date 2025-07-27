@@ -1,8 +1,53 @@
 "use client";
-import React from 'react';
-import { useAccount, useBalance } from 'wagmi';
+import React, { useEffect, useState } from 'react';
+import { useAccount, useBalance, useConnect } from 'wagmi';
 import { sepolia } from 'wagmi/chains';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+
+// Type declarations for wallet browsers
+declare global {
+  interface Window {
+    ethereum?: any;
+    phantom?: {
+      ethereum?: any;
+    };
+    solana?: any;
+    tronWeb?: any;
+    bitkeep?: any;
+    okxwallet?: any;
+    trustwallet?: any;
+    coinbaseWalletExtension?: any;
+    rabby?: any;
+    imToken?: any;
+    tokenpocket?: any;
+    onto?: any;
+    bitget?: any;
+    bybit?: any;
+    gate?: any;
+    huobi?: any;
+    kucoin?: any;
+    binance?: any;
+    mexc?: any;
+    bitmart?: any;
+    coinex?: any;
+    ascendex?: any;
+    bigone?: any;
+    bitforex?: any;
+    bitrue?: any;
+    btcex?: any;
+    btse?: any;
+    crypto?: any;
+    ftx?: any;
+    kraken?: any;
+    poloniex?: any;
+    probit?: any;
+    upbit?: any;
+    whitebit?: any;
+    xt?: any;
+    zb?: any;
+    zonda?: any;
+  }
+}
 
 // Hyperliquid logo SVG (inline, with subtle colors)
 const HyperliquidLogo = () => (
@@ -26,6 +71,117 @@ export function WalletConnect() {
   const { address, isConnected } = useAccount();
   const { data: balanceData } = useBalance({ address, chainId: sepolia.id });
   const balance = balanceData ? parseFloat(balanceData.formatted).toFixed(4) : '0.0000';
+  const [isWeb3WalletBrowser, setIsWeb3WalletBrowser] = useState(false);
+  const [autoConnecting, setAutoConnecting] = useState(false);
+
+  useEffect(() => {
+    // Detect Web3 wallet browser
+    const detectWeb3WalletBrowser = () => {
+      const isWalletBrowser = (
+        window.ethereum ||
+        window.phantom?.ethereum ||
+        window.solana ||
+        window.tronWeb ||
+        window.bitkeep ||
+        window.okxwallet ||
+        window.trustwallet ||
+        window.coinbaseWalletExtension ||
+        window.rabby ||
+        window.imToken ||
+        window.tokenpocket ||
+        window.onto ||
+        window.bitget ||
+        window.bybit ||
+        window.gate ||
+        window.huobi ||
+        window.kucoin ||
+        window.binance ||
+        window.mexc ||
+        window.bitmart ||
+        window.coinex ||
+        window.ascendex ||
+        window.bigone ||
+        window.bitforex ||
+        window.bitrue ||
+        window.btcex ||
+        window.btse ||
+        window.crypto ||
+        window.ftx ||
+        window.kraken ||
+        window.poloniex ||
+        window.probit ||
+        window.upbit ||
+        window.whitebit ||
+        window.xt ||
+        window.zb ||
+        window.zonda ||
+        // Check for specific wallet indicators
+        (window.ethereum && window.ethereum.isMetaMask) ||
+        (window.phantom && window.phantom.ethereum) ||
+        (window.ethereum && window.ethereum.isTrust) ||
+        (window.ethereum && window.ethereum.isCoinbaseWallet) ||
+        (window.ethereum && window.ethereum.isBraveWallet) ||
+        (window.ethereum && window.ethereum.isOpera) ||
+        (window.ethereum && window.ethereum.isRabby) ||
+        (window.ethereum && window.ethereum.isImToken) ||
+        (window.ethereum && window.ethereum.isTokenPocket) ||
+        (window.ethereum && window.ethereum.isONTO) ||
+        (window.ethereum && window.ethereum.isBitgetWallet) ||
+        (window.ethereum && window.ethereum.isBybitWallet) ||
+        (window.ethereum && window.ethereum.isGateWallet) ||
+        (window.ethereum && window.ethereum.isHuobiWallet) ||
+        (window.ethereum && window.ethereum.isKuCoinWallet) ||
+        (window.ethereum && window.ethereum.isBinanceWallet) ||
+        (window.ethereum && window.ethereum.isMEXCWallet) ||
+        (window.ethereum && window.ethereum.isBitMartWallet) ||
+        (window.ethereum && window.ethereum.isCoinExWallet) ||
+        (window.ethereum && window.ethereum.isAscendEXWallet) ||
+        (window.ethereum && window.ethereum.isBigONEWallet) ||
+        (window.ethereum && window.ethereum.isBitForexWallet) ||
+        (window.ethereum && window.ethereum.isBitrueWallet) ||
+        (window.ethereum && window.ethereum.isBTCEXWallet) ||
+        (window.ethereum && window.ethereum.isBTSEWallet) ||
+        (window.ethereum && window.ethereum.isCryptoComWallet) ||
+        (window.ethereum && window.ethereum.isFTXWallet) ||
+        (window.ethereum && window.ethereum.isKrakenWallet) ||
+        (window.ethereum && window.ethereum.isPoloniexWallet) ||
+        (window.ethereum && window.ethereum.isProBitWallet) ||
+        (window.ethereum && window.ethereum.isUpbitWallet) ||
+        (window.ethereum && window.ethereum.isWhiteBITWallet) ||
+        (window.ethereum && window.ethereum.isXTWallet) ||
+        (window.ethereum && window.ethereum.isZBWallet) ||
+        (window.ethereum && window.ethereum.isZondaWallet)
+      );
+
+      setIsWeb3WalletBrowser(isWalletBrowser);
+      
+      if (isWalletBrowser && !isConnected && !autoConnecting) {
+        setAutoConnecting(true);
+        console.log('Web3 wallet browser detected, attempting auto-connect...');
+        
+        // Auto-connect to the detected wallet
+        const autoConnect = async () => {
+          try {
+            if (window.ethereum) {
+              const accounts = await window.ethereum.request({ 
+                method: 'eth_requestAccounts' 
+              });
+              console.log('Auto-connected to wallet:', accounts[0]);
+            }
+          } catch (error) {
+            console.log('Auto-connect failed:', error);
+          } finally {
+            setAutoConnecting(false);
+          }
+        };
+
+        // Delay to ensure RainbowKit is ready
+        setTimeout(autoConnect, 1500);
+      }
+    };
+
+    detectWeb3WalletBrowser();
+  }, [isConnected, autoConnecting]);
 
   return (
     <div className="wallet-connect-ocean">
@@ -34,6 +190,25 @@ export function WalletConnect() {
           {({ account, chain, openConnectModal, openAccountModal, mounted }) => {
             const ready = mounted;
             const connected = ready && account && chain;
+            
+            // Show connecting state for Web3 wallet browsers
+            if (isWeb3WalletBrowser && autoConnecting && !connected) {
+              return (
+                <button
+                  className="unified-btn connecting"
+                  disabled={true}
+                  style={{
+                    minHeight: '44px',
+                    touchAction: 'manipulation',
+                    WebkitTapHighlightColor: 'transparent',
+                  }}
+                >
+                  <span className="hl-logo"><HyperliquidLogo /></span>
+                  <span className="connect-label">Connecting...</span>
+                </button>
+              );
+            }
+
             return (
               <button
                 className="unified-btn"
@@ -54,7 +229,9 @@ export function WalletConnect() {
                     <span className="account-label">{account.displayName}</span>
                   </>
                 ) : (
-                  <span className="connect-label">Connect Wallet</span>
+                  <span className="connect-label">
+                    {isWeb3WalletBrowser ? 'Connect' : 'Connect Wallet'}
+                  </span>
                 )}
               </button>
             );
@@ -106,6 +283,14 @@ export function WalletConnect() {
           outline: none;
           -webkit-tap-highlight-color: transparent;
           touch-action: manipulation;
+        }
+        .unified-btn.connecting {
+          animation: connectingPulse 1.5s ease-in-out infinite;
+          opacity: 0.8;
+        }
+        @keyframes connectingPulse {
+          0%, 100% { opacity: 0.8; }
+          50% { opacity: 1; }
         }
         .unified-btn:before {
           content: '';
