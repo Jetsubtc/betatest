@@ -43,6 +43,14 @@ export default function RootLayout({
         <meta name="theme-color" content="#14F195" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="msapplication-tap-highlight" content="no" />
+        {/* Mobile wallet browser optimizations */}
+        <meta name="robots" content="noindex,nofollow" />
+        <meta name="referrer" content="no-referrer" />
+        <meta name="cache-control" content="no-cache" />
+        <meta name="pragma" content="no-cache" />
+        <meta name="expires" content="0" />
+        {/* Prevent zoom on input focus */}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       </head>
       <body className={inter.className}>
         <Web3Provider>

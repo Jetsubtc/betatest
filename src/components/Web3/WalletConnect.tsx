@@ -40,6 +40,11 @@ export function WalletConnect() {
                 onClick={connected ? openAccountModal : openConnectModal}
                 type="button"
                 disabled={!ready}
+                style={{
+                  minHeight: '44px',
+                  touchAction: 'manipulation',
+                  WebkitTapHighlightColor: 'transparent',
+                }}
               >
                 <span className="hl-logo"><HyperliquidLogo /></span>
                 {connected ? (
@@ -99,6 +104,8 @@ export function WalletConnect() {
           font-family: inherit;
           user-select: none;
           outline: none;
+          -webkit-tap-highlight-color: transparent;
+          touch-action: manipulation;
         }
         .unified-btn:before {
           content: '';
@@ -197,15 +204,82 @@ export function WalletConnect() {
           outline: 2.5px solid #5ee7b7;
           outline-offset: 2px;
         }
-        @media (max-width: 600px) {
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+          .wallet-connect-ocean {
+            right: 12px;
+            top: 12px;
+          }
+          .unified-btn {
+            padding: 10px 14px;
+            font-size: 13px;
+            min-width: 100px;
+            min-height: 44px;
+            border-radius: 20px;
+          }
+          .hl-logo {
+            width: 22px;
+            height: 22px;
+          }
+          .eth-balance {
+            font-size: 12px;
+            padding: 1px 6px;
+          }
+          .testnet-label {
+            font-size: 11px;
+            padding: 2px 8px;
+          }
+          .account-label {
+            font-size: 12px;
+            padding: 1px 6px;
+          }
+          .connect-label {
+            font-size: 13px;
+          }
+        }
+        
+        @media (max-width: 480px) {
           .wallet-connect-ocean {
             right: 8px;
             top: 8px;
           }
           .unified-btn {
-            padding: 6px 7px;
+            padding: 8px 12px;
             font-size: 12px;
-            min-width: 80px;
+            min-width: 90px;
+            min-height: 40px;
+          }
+          .hl-logo {
+            width: 20px;
+            height: 20px;
+          }
+          .eth-balance {
+            font-size: 11px;
+            padding: 1px 5px;
+          }
+          .testnet-label {
+            font-size: 10px;
+            padding: 1.5px 6px;
+          }
+          .account-label {
+            font-size: 11px;
+            padding: 1px 5px;
+          }
+          .connect-label {
+            font-size: 12px;
+          }
+        }
+        
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+          .unified-btn:hover {
+            transform: none;
+            box-shadow: 0 3px 14px 0 rgba(94,231,183,0.13), 0 1px 4px 0 rgba(33,118,174,0.10);
+          }
+          .unified-btn:active {
+            transform: scale(0.95);
+            transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
           }
         }
       `}</style>
