@@ -694,72 +694,6 @@ body {
   box-shadow: none !important;
 }
 
-@media (max-width: 420px) {
-  .container {
-    height: calc(100vh - 80px);
-  }
-
-  .block {
-    width: 52px;
-    height: 52px;
-  }
-
-  .blocks {
-    gap: 6px;
-    max-width: calc(52px * 6 + 6px * 5);
-  }
-
-  .multiplier-label {
-    font-size: 12px;
-  }
-
-  .balance-info {
-    font-size: 14px;
-    gap: 12px;
-  }
-
-  .btn, .btn-claim, #restartBtn {
-    font-size: 14px;
-    padding: 10px 20px;
-  }
-
-  .bottom-box {
-    height: 80px;
-    padding: 12px 10px;
-  }
-
-  .menu-bar {
-    height: 40px;
-    padding: 6px 10px;
-  }
-
-  .menu-left button {
-    font-size: 18px;
-  }
-
-  .menu-right {
-    gap: 6px;
-  }
-
-  #balanceDisplay {
-    font-size: 12px;
-    white-space: nowrap;
-  }
-
-  #connectWallet {
-    padding: 5px 10px;
-    font-size: 13px;
-  }
-
-  #floatingInfoBox {
-    top: 50px;
-    font-size: 14px;
-    padding: 8px 16px;
-  }
-}
-
-/* ===== ENHANCED MOBILE RESPONSIVE STYLES ===== */
-
 /* Mobile touch optimizations */
 @media (max-width: 768px) {
   /* Prevent text selection and improve touch */
@@ -768,6 +702,8 @@ body {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   /* Optimize for mobile screens */
@@ -776,6 +712,7 @@ body {
     position: fixed;
     width: 100%;
     height: 100%;
+    -webkit-overflow-scrolling: touch;
   }
 
   /* Mobile-friendly container */
@@ -784,104 +721,194 @@ body {
     height: calc(100vh - 60px);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
   }
 
-  /* Mobile-optimized blocks */
+  /* Mobile-optimized blocks with enhanced touch */
   .block {
-    width: 60px;
-    height: 60px;
-    border-radius: 16px;
-    min-height: 44px; /* Touch target minimum */
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    min-height: 48px; /* Touch target minimum */
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
   }
 
   .blocks {
-    gap: 8px;
+    gap: 10px;
     justify-content: center;
   }
 
-  /* Mobile menu bar */
+  /* Enhanced block hover/active states for mobile */
+  .block:active {
+    transform: scale(0.88);
+    transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Mobile menu bar with better blur */
   .menu-bar {
-    height: 56px;
+    height: 60px;
     padding: 8px 12px;
     position: sticky;
     top: 0;
     z-index: 100;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
 
   /* Mobile bottom box */
   .bottom-box {
     width: 100%;
     max-width: 400px;
-    height: 90px;
-    padding: 12px 16px;
-    border-radius: 16px 16px 0 0;
+    height: 95px;
+    padding: 14px 18px;
+    border-radius: 18px 18px 0 0;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
 
   .balance-info {
     font-size: 16px;
-    gap: 20px;
+    gap: 22px;
     flex-wrap: wrap;
     justify-content: center;
   }
 
-  /* Mobile buttons */
+  /* Enhanced mobile buttons */
   .btn, .btn-claim, #restartBtn {
-    min-height: 44px;
-    padding: 12px 20px;
+    min-height: 48px;
+    padding: 14px 22px;
     font-size: 16px;
-    border-radius: 22px;
+    border-radius: 24px;
     touch-action: manipulation;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .btn:active, .btn-claim:active, #restartBtn:active {
+    transform: scale(0.92);
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* Mobile multiplier labels */
   .multiplier-label {
     font-size: 14px;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+    text-shadow: 0 0 8px rgba(255,255,255,0.3);
   }
 
-  /* Mobile floating info */
+  /* Mobile floating info with smooth animation */
   #floatingInfoBox {
-    top: 70px;
+    top: 75px;
     font-size: 14px;
-    padding: 10px 18px;
-    max-width: 90%;
+    padding: 12px 20px;
+    max-width: 92%;
     left: 50%;
     transform: translateX(-50%);
+    animation: mobileFloatIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Mobile modals */
+  @keyframes mobileFloatIn {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+
+  /* Mobile modals with smooth animations */
   .win-modal, .lose-modal {
-    padding: 24px 32px;
-    font-size: 1.5rem;
-    max-width: 90%;
-    margin: 20px;
+    padding: 28px 36px;
+    font-size: 1.6rem;
+    max-width: 92%;
+    margin: 24px;
+    animation: mobileModalBounce 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @keyframes mobileModalBounce {
+    0% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.8);
+    }
+    50% {
+      transform: translate(-50%, -50%) scale(1.05);
+    }
+    100% {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
   }
 
   .win-text, .lose-text {
-    font-size: 1.8em;
+    font-size: 2em;
   }
 }
 
-/* Small mobile devices */
+/* Small mobile devices with enhanced touch */
 @media (max-width: 480px) {
   .block {
-    width: 50px;
-    height: 50px;
-    border-radius: 12px;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    min-height: 44px;
   }
 
   .blocks {
-    gap: 6px;
+    gap: 8px;
   }
 
   .menu-bar {
-    height: 52px;
+    height: 56px;
     padding: 6px 10px;
   }
 
   .bottom-box {
-    height: 85px;
-    padding: 10px 12px;
+    height: 90px;
+    padding: 12px 14px;
+  }
+
+  .balance-info {
+    font-size: 15px;
+    gap: 18px;
+  }
+
+  .btn, .btn-claim, #restartBtn {
+    padding: 12px 18px;
+    font-size: 15px;
+    min-height: 44px;
+  }
+
+  .multiplier-label {
+    font-size: 13px;
+  }
+
+  #floatingInfoBox {
+    font-size: 13px;
+    padding: 10px 18px;
+  }
+}
+
+/* Extra small devices with optimized touch */
+@media (max-width: 360px) {
+  .block {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    min-height: 40px;
+  }
+
+  .blocks {
+    gap: 6px;
   }
 
   .balance-info {
@@ -892,64 +919,33 @@ body {
   .btn, .btn-claim, #restartBtn {
     padding: 10px 16px;
     font-size: 14px;
-  }
-
-  .multiplier-label {
-    font-size: 12px;
-  }
-
-  #floatingInfoBox {
-    font-size: 13px;
-    padding: 8px 16px;
+    min-height: 42px;
   }
 }
 
-/* Extra small devices */
-@media (max-width: 360px) {
-  .block {
-    width: 45px;
-    height: 45px;
-    border-radius: 10px;
-  }
-
-  .blocks {
-    gap: 4px;
-  }
-
-  .balance-info {
-    font-size: 13px;
-    gap: 12px;
-  }
-
-  .btn, .btn-claim, #restartBtn {
-    padding: 8px 14px;
-    font-size: 13px;
-  }
-}
-
-/* Landscape mobile optimization */
+/* Landscape mobile optimization with smooth transitions */
 @media (max-width: 768px) and (orientation: landscape) {
   .container {
-    height: calc(100vh - 50px);
-    padding: 4px 6px 80px;
+    height: calc(100vh - 55px);
+    padding: 4px 6px 85px;
   }
 
   .menu-bar {
-    height: 48px;
+    height: 52px;
   }
 
   .bottom-box {
-    height: 70px;
-    padding: 8px 12px;
+    height: 80px;
+    padding: 10px 14px;
   }
 
   .balance-info {
-    font-size: 14px;
-    gap: 16px;
+    font-size: 15px;
+    gap: 20px;
   }
 }
 
-/* Touch device optimizations */
+/* Enhanced touch device optimizations */
 @media (hover: none) and (pointer: coarse) {
   /* Remove hover effects on touch devices */
   .block:hover,
@@ -960,24 +956,33 @@ body {
     box-shadow: none;
   }
 
-  /* Active state for touch feedback */
+  /* Enhanced active state for touch feedback */
   .block:active {
-    transform: scale(0.95);
-    transition: transform 0.1s ease;
+    transform: scale(0.85);
+    transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .btn:active,
   .btn-claim:active,
   #restartBtn:active {
-    transform: scale(0.98);
-    transition: transform 0.1s ease;
+    transform: scale(0.9);
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Prevent text selection on touch */
+  * {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
   }
 }
 
-/* High DPI displays */
+/* High DPI displays with better rendering */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   .block {
     box-shadow: inset 0 0 4px rgba(255,255,255,0.1), 0 4px 8px rgba(0,0,0,0.4);
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
   }
 }
 
@@ -1012,5 +1017,32 @@ body {
   
   .bottom-box {
     background: rgba(20, 20, 20, 0.9);
+  }
+}
+
+/* Mobile-specific performance optimizations */
+@media (max-width: 768px) {
+  /* Prevent zoom on double tap */
+  * {
+    touch-action: manipulation;
+  }
+  
+  /* Smooth transitions for all interactive elements */
+  button, .sound-toggle-btn, #menuButton, .block, .menu-section, .leaderboard-item, .history-item {
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  
+  /* Optimize scrolling performance */
+  .container {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+  }
+  
+  /* Prevent layout shifts */
+  .block {
+    contain: layout style paint;
   }
 }

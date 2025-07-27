@@ -275,22 +275,53 @@ export default function AxieGame() {
     }
   };
 
-  // Mobile touch event handler with better touch feedback
+  // Enhanced mobile touch event handler with smooth feedback
   const handleBlockTouch = (level: number, blockIdx: number, event: React.TouchEvent) => {
     event.preventDefault(); // Prevent default touch behavior
     event.stopPropagation(); // Stop event bubbling
     
-    // Add visual feedback for touch
+    // Enhanced visual feedback for touch
     const target = event.currentTarget as HTMLElement;
-    target.style.transform = 'scale(0.95)';
-    target.style.transition = 'transform 0.1s ease';
+    target.style.transform = 'scale(0.85)';
+    target.style.transition = 'transform 0.12s cubic-bezier(0.4, 0, 0.2, 1)';
+    target.style.filter = 'brightness(1.1)';
+    
+    // Add haptic feedback if available
+    if ('vibrate' in navigator) {
+      navigator.vibrate(10);
+    }
     
     setTimeout(() => {
       target.style.transform = '';
       target.style.transition = '';
-    }, 100);
+      target.style.filter = '';
+    }, 120);
     
     handleBlockClick(level, blockIdx);
+  };
+
+  // Enhanced touch start handler for immediate feedback
+  const handleBlockTouchStart = (level: number, blockIdx: number, event: React.TouchEvent) => {
+    if (!isConnected) return;
+    if (!gameActive) {
+      setStatus("Please place a bet first.");
+      setStatusKey(Date.now());
+      return;
+    }
+    if (!lost && !won && level === currentLevel && revealed[level] === undefined) {
+      // Immediate visual feedback
+      const target = event.currentTarget as HTMLElement;
+      target.style.transform = 'scale(0.9)';
+      target.style.transition = 'transform 0.08s cubic-bezier(0.4, 0, 0.2, 1)';
+    }
+  };
+
+  // Enhanced touch end handler
+  const handleBlockTouchEnd = (level: number, blockIdx: number, event: React.TouchEvent) => {
+    event.preventDefault();
+    const target = event.currentTarget as HTMLElement;
+    target.style.transform = '';
+    target.style.transition = '';
   };
 
   const handleCashOut = () => {
@@ -562,18 +593,10 @@ export default function AxieGame() {
                           handleBlockClick(level, j);
                         }
                       }}
-                      onTouchStart={(e) => {
-                        if (!isConnected) return;
-                        if (!gameActive) {
-                          setStatus("Please place a bet first.");
-                          setStatusKey(Date.now());
-                          return;
-                        }
-                        if (!lost && !won && level === currentLevel && revealed[level] === undefined) {
-                          handleBlockTouch(level, j, e);
-                        }
-                      }}
-                      onTouchEnd={(e) => {
+                      onTouchStart={(e) => handleBlockTouchStart(level, j, e)}
+                      onTouchEnd={(e) => handleBlockTouchEnd(level, j, e)}
+                      onTouchMove={(e) => {
+                        // Prevent scrolling when touching blocks
                         e.preventDefault();
                       }}
                     >

@@ -450,56 +450,173 @@
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   /* Touch-friendly button sizes */
   button, .sound-toggle-btn, #menuButton {
-    min-height: 44px;
-    min-width: 44px;
-    padding: 12px 16px;
+    min-height: 48px;
+    min-width: 48px;
+    padding: 14px 18px;
     font-size: 1rem;
-    border-radius: 12px;
+    border-radius: 16px;
     touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* Menu bar mobile layout */
   .menu-bar {
-    height: 64px;
-    padding: 0 12px;
+    height: 68px;
+    padding: 0 16px;
     flex-direction: column;
     gap: 8px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
 
   .menu-left {
     width: 100%;
     justify-content: space-between;
+    align-items: center;
   }
 
   /* Warning text mobile */
   .bet-warning-text {
     font-size: 1.1rem;
     margin: 12px 0 8px 0;
-    padding: 0 8px;
+    padding: 0 12px;
+    animation: mobileShake 0.6s ease-in-out;
+  }
+
+  @keyframes mobileShake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+    20%, 40%, 60%, 80% { transform: translateX(2px); }
   }
 
   /* Sound toggle mobile */
   .sound-toggle-btn {
-    font-size: 0.9rem;
-    padding: 10px 14px;
+    font-size: 0.95rem;
+    padding: 12px 16px;
     margin-left: 8px;
+    border-radius: 20px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .sound-toggle-btn .sound-icon {
-    width: 1.6em;
-    height: 1.6em;
-    font-size: 1em;
+    width: 1.8em;
+    height: 1.8em;
+    font-size: 1.1em;
+    transition: all 0.2s ease;
   }
 
   /* Menu sections mobile */
   .menu-section {
-    padding: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .menu-section-header {
+    font-size: 1.1rem;
     margin-bottom: 12px;
-    border-radius: 10px;
+  }
+
+  .leaderboard-item,
+  .history-item {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    border-radius: 12px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .leaderboard-address {
+    font-size: 0.8rem;
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Faucet modal mobile */
+  .faucet-content {
+    padding: 28px 24px;
+    margin: 24px;
+    max-width: 92%;
+    border-radius: 20px;
+    animation: mobileModalSlide 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @keyframes mobileModalSlide {
+    from {
+      opacity: 0;
+      transform: translateY(-30px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .faucet-content h3 {
+    font-size: 1.4rem;
+  }
+
+  .faucet-content p {
+    font-size: 0.95rem;
+  }
+
+  .faucet-link {
+    padding: 16px 20px;
+    font-size: 0.95rem;
+    border-radius: 12px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .close-btn {
+    padding: 14px 24px;
+    font-size: 0.95rem;
+    border-radius: 12px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  /* Even smaller touch targets for very small screens */
+  button, .sound-toggle-btn, #menuButton {
+    min-height: 52px;
+    min-width: 52px;
+    padding: 16px 20px;
+    font-size: 0.95rem;
+    border-radius: 18px;
+  }
+
+  /* Compact menu layout */
+  .menu-bar {
+    height: 76px;
+    padding: 0 12px;
+  }
+
+  .menu-left {
+    gap: 8px;
+  }
+
+  /* Smaller warning text */
+  .bet-warning-text {
+    font-size: 1rem;
+    margin: 10px 0 6px 0;
+    padding: 0 10px;
+  }
+
+  /* Compact menu sections */
+  .menu-section {
+    padding: 14px;
+    margin-bottom: 14px;
+    border-radius: 14px;
   }
 
   .menu-section-header {
@@ -509,23 +626,21 @@
 
   .leaderboard-item,
   .history-item {
-    padding: 10px 12px;
+    padding: 10px 14px;
     font-size: 0.85rem;
+    border-radius: 10px;
   }
 
   .leaderboard-address {
+    max-width: 70px;
     font-size: 0.75rem;
-    max-width: 80px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
-  /* Faucet modal mobile */
+  /* Smaller faucet modal */
   .faucet-content {
     padding: 24px 20px;
     margin: 20px;
-    max-width: 90%;
+    border-radius: 18px;
   }
 
   .faucet-content h3 {
@@ -535,85 +650,12 @@
   .faucet-content p {
     font-size: 0.9rem;
   }
-
-  .faucet-link {
-    padding: 14px 16px;
-    font-size: 0.9rem;
-  }
-
-  .close-btn {
-    padding: 12px 20px;
-    font-size: 0.9rem;
-  }
-}
-
-/* Small mobile devices */
-@media (max-width: 480px) {
-  /* Even smaller touch targets for very small screens */
-  button, .sound-toggle-btn, #menuButton {
-    min-height: 48px;
-    min-width: 48px;
-    padding: 14px 18px;
-    font-size: 0.95rem;
-  }
-
-  /* Compact menu layout */
-  .menu-bar {
-    height: 72px;
-    padding: 0 8px;
-  }
-
-  .menu-left {
-    gap: 6px;
-  }
-
-  /* Smaller warning text */
-  .bet-warning-text {
-    font-size: 1rem;
-    margin: 10px 0 6px 0;
-  }
-
-  /* Compact menu sections */
-  .menu-section {
-    padding: 10px;
-    margin-bottom: 10px;
-  }
-
-  .menu-section-header {
-    font-size: 0.95rem;
-    margin-bottom: 8px;
-  }
-
-  .leaderboard-item,
-  .history-item {
-    padding: 8px 10px;
-    font-size: 0.8rem;
-  }
-
-  .leaderboard-address {
-    max-width: 60px;
-    font-size: 0.7rem;
-  }
-
-  /* Smaller faucet modal */
-  .faucet-content {
-    padding: 20px 16px;
-    margin: 16px;
-  }
-
-  .faucet-content h3 {
-    font-size: 1.2rem;
-  }
-
-  .faucet-content p {
-    font-size: 0.85rem;
-  }
 }
 
 /* Landscape mobile optimization */
 @media (max-width: 768px) and (orientation: landscape) {
   .menu-bar {
-    height: 56px;
+    height: 60px;
     flex-direction: row;
     align-items: center;
   }
@@ -629,7 +671,7 @@
   }
 }
 
-/* Touch interaction improvements */
+/* Enhanced touch interaction improvements */
 @media (hover: none) and (pointer: coarse) {
   /* Remove hover effects on touch devices */
   button:hover,
@@ -644,33 +686,44 @@
     box-shadow: none;
   }
 
-  /* Active state for touch feedback */
+  /* Enhanced active state for touch feedback */
   button:active,
   .sound-toggle-btn:active,
   #menuButton:active {
-    transform: scale(0.95);
-    transition: transform 0.1s ease;
+    transform: scale(0.92);
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .menu-section:active,
   .leaderboard-item:active,
   .history-item:active {
-    transform: translateX(1px);
-    transition: transform 0.1s ease;
+    transform: translateX(2px) scale(0.98);
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .faucet-link:active,
   .close-btn:active {
-    transform: translateY(1px);
-    transition: transform 0.1s ease;
+    transform: translateY(1px) scale(0.96);
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Block touch feedback */
+  .block:active {
+    transform: scale(0.88);
+    transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
-/* High DPI displays */
+/* High DPI displays with better rendering */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   .sound-toggle-btn .sound-icon,
   .leaderboard-rank .rank-number {
     box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  
+  .block {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
   }
 }
 
@@ -705,6 +758,27 @@
   .faucet-content {
     margin-left: max(20px, env(safe-area-inset-left));
     margin-right: max(20px, env(safe-area-inset-right));
+  }
+}
+
+/* Mobile-specific smooth scrolling */
+@media (max-width: 768px) {
+  .container {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+  }
+  
+  /* Prevent zoom on double tap */
+  * {
+    touch-action: manipulation;
+  }
+  
+  /* Smooth transitions for all interactive elements */
+  button, .sound-toggle-btn, #menuButton, .block, .menu-section, .leaderboard-item, .history-item {
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
   }
 }
 
