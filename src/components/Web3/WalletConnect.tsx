@@ -52,16 +52,31 @@ export function WalletConnect() {
 
     setIsConnecting(true);
     try {
+      console.log('Attempting to connect to MetaMask...');
+      
+      // Request accounts from MetaMask
       const accounts = await window.ethereum.request({
         method: 'eth_requestAccounts'
       });
       
       if (accounts && accounts.length > 0) {
         console.log('Connected to MetaMask:', accounts[0]);
+        
+        // Force a page reload to update the connection state
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
+        console.log('No accounts returned from MetaMask');
+        alert('No accounts found. Please unlock your MetaMask wallet.');
       }
     } catch (error) {
       console.error('MetaMask connection failed:', error);
-      alert('Failed to connect to MetaMask. Please try again.');
+      if (error.code === 4001) {
+        alert('Connection was rejected. Please try again.');
+      } else {
+        alert('Failed to connect to MetaMask. Please try again.');
+      }
     } finally {
       setIsConnecting(false);
     }
@@ -76,6 +91,11 @@ export function WalletConnect() {
       // Use wagmi disconnect
       disconnect();
       console.log('Wagmi disconnect called');
+      
+      // Force a page reload to clear the connection state
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
       
     } catch (error) {
       console.error('Disconnect failed:', error);
