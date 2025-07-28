@@ -29,8 +29,8 @@ export function WalletConnect() {
   const balance = balanceData ? parseFloat(balanceData.formatted).toFixed(4) : '0.0000';
   const [isMetaMaskMobile, setIsMetaMaskMobile] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [autoConnecting, setAutoConnecting] = useState(false);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
+  const [hasAutoConnected, setHasAutoConnected] = useState(false);
 
   useEffect(() => {
     // Check if we're in MetaMask mobile browser
@@ -40,10 +40,10 @@ export function WalletConnect() {
       console.log('MetaMask mobile detected:', isMobile);
       console.log('Current connection state:', { isConnected, address });
       
-      // If we're in MetaMask mobile and not connected, try auto-connect
-      if (isMobile && !isConnected && !autoConnecting) {
-        setAutoConnecting(true);
-        console.log('Attempting auto-connect in MetaMask mobile...');
+      // Only auto-connect once if we're in MetaMask mobile and not connected
+      if (isMobile && !isConnected && !hasAutoConnected) {
+        setHasAutoConnected(true);
+        console.log('Attempting one-time auto-connect in MetaMask mobile...');
         
         const autoConnect = async () => {
           try {
@@ -53,25 +53,19 @@ export function WalletConnect() {
             
             if (accounts && accounts.length > 0) {
               console.log('Auto-connected to MetaMask:', accounts[0]);
-              // Force page reload to update connection state
-              setTimeout(() => {
-                window.location.reload();
-              }, 1000);
             }
           } catch (error) {
             console.log('Auto-connect failed:', error);
-          } finally {
-            setAutoConnecting(false);
           }
         };
         
-        // Delay to ensure everything is loaded
+        // Single delay for auto-connect
         setTimeout(autoConnect, 2000);
       }
     };
 
     checkMetaMaskMobile();
-  }, [isConnected, autoConnecting, address]);
+  }, [isConnected, address, hasAutoConnected]);
 
   // Manual MetaMask connection
   const connectMetaMaskDirectly = async () => {
@@ -88,10 +82,6 @@ export function WalletConnect() {
       
       if (accounts && accounts.length > 0) {
         console.log('Connected to MetaMask:', accounts[0]);
-        // Force page reload to update connection state
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
       }
     } catch (error) {
       console.error('MetaMask connection failed:', error);
@@ -101,41 +91,21 @@ export function WalletConnect() {
     }
   };
 
-  // Handle disconnect for mobile
-  const handleDisconnect = async () => {
+  // Simple disconnect for mobile
+  const handleDisconnect = () => {
     console.log('Disconnect button clicked');
     setIsDisconnecting(true);
     
     try {
-      // First try wagmi disconnect
+      // Use wagmi disconnect
       disconnect();
       console.log('Wagmi disconnect called');
       
-      // Also try to clear MetaMask connection
-      if (window.ethereum) {
-        try {
-          await window.ethereum.request({
-            method: 'wallet_requestPermissions',
-            params: [{ eth_accounts: {} }]
-          });
-          console.log('MetaMask permissions cleared');
-        } catch (error) {
-          console.log('MetaMask permission clear failed:', error);
-        }
-      }
-      
-      // Force page reload to clear state
-      setTimeout(() => {
-        console.log('Reloading page after disconnect');
-        window.location.reload();
-      }, 1000);
+      // Clear the auto-connect flag so it won't reconnect
+      setHasAutoConnected(false);
       
     } catch (error) {
       console.error('Disconnect failed:', error);
-      // Force reload anyway
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
     } finally {
       setIsDisconnecting(false);
     }
@@ -151,8 +121,8 @@ export function WalletConnect() {
     address, 
     isMetaMaskMobile, 
     isConnecting, 
-    autoConnecting, 
-    isDisconnecting 
+    isDisconnecting,
+    hasAutoConnected
   });
 
   return (
@@ -184,7 +154,7 @@ export function WalletConnect() {
             <button
               className="unified-btn"
               onClick={connectMetaMaskDirectly}
-              disabled={isConnecting || autoConnecting}
+              disabled={isConnecting}
               style={{
                 minHeight: '44px',
                 touchAction: 'manipulation',
@@ -193,7 +163,7 @@ export function WalletConnect() {
             >
               <span className="hl-logo"><HyperliquidLogo /></span>
               <span className="connect-label">
-                {isConnecting ? 'Connecting...' : autoConnecting ? 'Auto-connecting...' : 'Connect MetaMask'}
+                {isConnecting ? 'Connecting...' : 'Connect MetaMask'}
               </span>
             </button>
           )
