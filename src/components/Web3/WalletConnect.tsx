@@ -81,6 +81,17 @@ export function WalletConnect() {
     }
   };
 
+  // Handle connected state click (open MetaMask)
+  const handleConnectedClick = () => {
+    if (window.ethereum) {
+      // Try to open MetaMask
+      window.ethereum.request({ method: 'eth_requestAccounts' }).catch(() => {
+        // If that fails, just show an alert
+        alert('Click the MetaMask icon in your browser to manage your wallet.');
+      });
+    }
+  };
+
   // Format address for display
   const formatAddress = (addr: string) => {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
@@ -100,7 +111,7 @@ export function WalletConnect() {
           // MetaMask mobile handling - single button like website
           <button
             className="unified-btn"
-            onClick={isConnected ? () => {} : connectMetaMaskDirectly}
+            onClick={isConnected ? handleConnectedClick : connectMetaMaskDirectly}
             disabled={isConnecting}
             style={{
               minHeight: '44px',
