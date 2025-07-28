@@ -28,19 +28,49 @@ export function WalletConnect() {
   const balance = balanceData ? parseFloat(balanceData.formatted).toFixed(4) : '0.0000';
   const [isMetaMaskMobile, setIsMetaMaskMobile] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [autoConnecting, setAutoConnecting] = useState(false);
 
   useEffect(() => {
-    // Simple MetaMask mobile detection
+    // Check if we're in MetaMask mobile browser
     const checkMetaMaskMobile = () => {
       const isMobile = window.ethereum && window.ethereum.isMetaMask;
       setIsMetaMaskMobile(isMobile);
       console.log('MetaMask mobile detected:', isMobile);
+      
+      // If we're in MetaMask mobile and not connected, try auto-connect
+      if (isMobile && !isConnected && !autoConnecting) {
+        setAutoConnecting(true);
+        console.log('Attempting auto-connect in MetaMask mobile...');
+        
+        const autoConnect = async () => {
+          try {
+            const accounts = await window.ethereum.request({
+              method: 'eth_requestAccounts'
+            });
+            
+            if (accounts && accounts.length > 0) {
+              console.log('Auto-connected to MetaMask:', accounts[0]);
+              // Force page reload to update connection state
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
+            }
+          } catch (error) {
+            console.log('Auto-connect failed:', error);
+          } finally {
+            setAutoConnecting(false);
+          }
+        };
+        
+        // Delay to ensure everything is loaded
+        setTimeout(autoConnect, 2000);
+      }
     };
 
     checkMetaMaskMobile();
-  }, []);
+  }, [isConnected, autoConnecting]);
 
-  // Direct MetaMask connection for mobile
+  // Manual MetaMask connection
   const connectMetaMaskDirectly = async () => {
     if (!window.ethereum) {
       alert('MetaMask is not installed!');
@@ -56,7 +86,9 @@ export function WalletConnect() {
       if (accounts && accounts.length > 0) {
         console.log('Connected to MetaMask:', accounts[0]);
         // Force page reload to update connection state
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       }
     } catch (error) {
       console.error('MetaMask connection failed:', error);
@@ -74,7 +106,7 @@ export function WalletConnect() {
           <button
             className="unified-btn"
             onClick={connectMetaMaskDirectly}
-            disabled={isConnecting}
+            disabled={isConnecting || autoConnecting}
             style={{
               minHeight: '44px',
               touchAction: 'manipulation',
@@ -83,7 +115,7 @@ export function WalletConnect() {
           >
             <span className="hl-logo"><HyperliquidLogo /></span>
             <span className="connect-label">
-              {isConnecting ? 'Connecting...' : 'Connect MetaMask'}
+              {isConnecting ? 'Connecting...' : autoConnecting ? 'Auto-connecting...' : 'Connect MetaMask'}
             </span>
           </button>
         ) : (
