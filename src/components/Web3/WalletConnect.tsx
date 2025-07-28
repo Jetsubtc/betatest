@@ -30,6 +30,7 @@ export function WalletConnect() {
   const [isMetaMaskMobile, setIsMetaMaskMobile] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [autoConnecting, setAutoConnecting] = useState(false);
+  const [isDisconnecting, setIsDisconnecting] = useState(false);
 
   useEffect(() => {
     // Check if we're in MetaMask mobile browser
@@ -37,6 +38,7 @@ export function WalletConnect() {
       const isMobile = window.ethereum && window.ethereum.isMetaMask;
       setIsMetaMaskMobile(isMobile);
       console.log('MetaMask mobile detected:', isMobile);
+      console.log('Current connection state:', { isConnected, address });
       
       // If we're in MetaMask mobile and not connected, try auto-connect
       if (isMobile && !isConnected && !autoConnecting) {
@@ -69,7 +71,7 @@ export function WalletConnect() {
     };
 
     checkMetaMaskMobile();
-  }, [isConnected, autoConnecting]);
+  }, [isConnected, autoConnecting, address]);
 
   // Manual MetaMask connection
   const connectMetaMaskDirectly = async () => {
@@ -100,18 +102,58 @@ export function WalletConnect() {
   };
 
   // Handle disconnect for mobile
-  const handleDisconnect = () => {
-    disconnect();
-    // Force page reload to clear state
-    setTimeout(() => {
-      window.location.reload();
-    }, 500);
+  const handleDisconnect = async () => {
+    console.log('Disconnect button clicked');
+    setIsDisconnecting(true);
+    
+    try {
+      // First try wagmi disconnect
+      disconnect();
+      console.log('Wagmi disconnect called');
+      
+      // Also try to clear MetaMask connection
+      if (window.ethereum) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_requestPermissions',
+            params: [{ eth_accounts: {} }]
+          });
+          console.log('MetaMask permissions cleared');
+        } catch (error) {
+          console.log('MetaMask permission clear failed:', error);
+        }
+      }
+      
+      // Force page reload to clear state
+      setTimeout(() => {
+        console.log('Reloading page after disconnect');
+        window.location.reload();
+      }, 1000);
+      
+    } catch (error) {
+      console.error('Disconnect failed:', error);
+      // Force reload anyway
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } finally {
+      setIsDisconnecting(false);
+    }
   };
 
   // Format address for display
   const formatAddress = (addr: string) => {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
   };
+
+  console.log('WalletConnect render state:', { 
+    isConnected, 
+    address, 
+    isMetaMaskMobile, 
+    isConnecting, 
+    autoConnecting, 
+    isDisconnecting 
+  });
 
   return (
     <div className="wallet-connect-ocean">
@@ -123,6 +165,7 @@ export function WalletConnect() {
             <button
               className="unified-btn connected"
               onClick={handleDisconnect}
+              disabled={isDisconnecting}
               style={{
                 minHeight: '44px',
                 touchAction: 'manipulation',
@@ -132,7 +175,9 @@ export function WalletConnect() {
               <span className="hl-logo"><HyperliquidLogo /></span>
               <span className="eth-balance">{balance}</span>
               <span className="testnet-label">Testnet ETH</span>
-              <span className="account-label">{address ? formatAddress(address) : 'Wallet'}</span>
+              <span className="account-label">
+                {isDisconnecting ? 'Disconnecting...' : (address ? formatAddress(address) : 'Wallet')}
+              </span>
             </button>
           ) : (
             // Disconnected state for mobile
