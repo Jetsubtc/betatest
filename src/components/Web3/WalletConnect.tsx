@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { useAccount, useBalance } from 'wagmi';
+import { useAccount, useBalance, useDisconnect } from 'wagmi';
 import { sepolia } from 'wagmi/chains';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
@@ -25,6 +25,7 @@ const HyperliquidLogo = () => (
 export function WalletConnect() {
   const { address, isConnected } = useAccount();
   const { data: balanceData } = useBalance({ address, chainId: sepolia.id });
+  const { disconnect } = useDisconnect();
   const balance = balanceData ? parseFloat(balanceData.formatted).toFixed(4) : '0.0000';
   const [isMetaMaskMobile, setIsMetaMaskMobile] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -98,26 +99,59 @@ export function WalletConnect() {
     }
   };
 
+  // Handle disconnect for mobile
+  const handleDisconnect = () => {
+    disconnect();
+    // Force page reload to clear state
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
+  };
+
+  // Format address for display
+  const formatAddress = (addr: string) => {
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+  };
+
   return (
     <div className="wallet-connect-ocean">
       <div className="wallet-connect-unified">
-        {isMetaMaskMobile && !isConnected ? (
-          // Direct MetaMask connection for mobile
-          <button
-            className="unified-btn"
-            onClick={connectMetaMaskDirectly}
-            disabled={isConnecting || autoConnecting}
-            style={{
-              minHeight: '44px',
-              touchAction: 'manipulation',
-              WebkitTapHighlightColor: 'transparent',
-            }}
-          >
-            <span className="hl-logo"><HyperliquidLogo /></span>
-            <span className="connect-label">
-              {isConnecting ? 'Connecting...' : autoConnecting ? 'Auto-connecting...' : 'Connect MetaMask'}
-            </span>
-          </button>
+        {isMetaMaskMobile ? (
+          // MetaMask mobile handling
+          isConnected ? (
+            // Connected state for mobile
+            <button
+              className="unified-btn connected"
+              onClick={handleDisconnect}
+              style={{
+                minHeight: '44px',
+                touchAction: 'manipulation',
+                WebkitTapHighlightColor: 'transparent',
+              }}
+            >
+              <span className="hl-logo"><HyperliquidLogo /></span>
+              <span className="eth-balance">{balance}</span>
+              <span className="testnet-label">Testnet ETH</span>
+              <span className="account-label">{address ? formatAddress(address) : 'Wallet'}</span>
+            </button>
+          ) : (
+            // Disconnected state for mobile
+            <button
+              className="unified-btn"
+              onClick={connectMetaMaskDirectly}
+              disabled={isConnecting || autoConnecting}
+              style={{
+                minHeight: '44px',
+                touchAction: 'manipulation',
+                WebkitTapHighlightColor: 'transparent',
+              }}
+            >
+              <span className="hl-logo"><HyperliquidLogo /></span>
+              <span className="connect-label">
+                {isConnecting ? 'Connecting...' : autoConnecting ? 'Auto-connecting...' : 'Connect MetaMask'}
+              </span>
+            </button>
+          )
         ) : (
           // RainbowKit connection for desktop/other wallets
           <ConnectButton.Custom>
@@ -199,6 +233,11 @@ export function WalletConnect() {
           -webkit-tap-highlight-color: transparent;
           touch-action: manipulation;
         }
+        .unified-btn.connected {
+          background: linear-gradient(135deg, rgba(94,231,183,0.95), rgba(178,251,224,0.95));
+          border: 2.5px solid #5ee7b7;
+          animation: connectedGlow 2s ease-in-out infinite;
+        }
         .unified-btn:before {
           content: '';
           position: absolute;
@@ -229,6 +268,14 @@ export function WalletConnect() {
           50% {
             transform: translateY(-5px);
             box-shadow: 0 12px 36px 0 rgba(94,231,183,0.18), 0 1.5px 8px 0 rgba(33,118,174,0.13);
+          }
+        }
+        @keyframes connectedGlow {
+          0%, 100% {
+            box-shadow: 0 6px 32px 0 rgba(94,231,183,0.20), 0 1.5px 8px 0 rgba(33,118,174,0.10);
+          }
+          50% {
+            box-shadow: 0 12px 36px 0 rgba(94,231,183,0.30), 0 1.5px 8px 0 rgba(33,118,174,0.13);
           }
         }
         .hl-logo {
