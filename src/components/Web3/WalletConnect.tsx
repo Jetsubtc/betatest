@@ -29,7 +29,6 @@ export function WalletConnect() {
   const balance = balanceData ? parseFloat(balanceData.formatted).toFixed(4) : '0.0000';
   const [isMetaMaskMobile, setIsMetaMaskMobile] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [isDisconnecting, setIsDisconnecting] = useState(false);
 
   useEffect(() => {
     // Check if we're in MetaMask mobile browser
@@ -82,28 +81,6 @@ export function WalletConnect() {
     }
   };
 
-  // Disconnect function for mobile
-  const handleDisconnect = () => {
-    console.log('Disconnect button clicked');
-    setIsDisconnecting(true);
-    
-    try {
-      // Use wagmi disconnect
-      disconnect();
-      console.log('Wagmi disconnect called');
-      
-      // Force a page reload to clear the connection state
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
-      
-    } catch (error) {
-      console.error('Disconnect failed:', error);
-    } finally {
-      setIsDisconnecting(false);
-    }
-  };
-
   // Format address for display
   const formatAddress = (addr: string) => {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
@@ -113,59 +90,39 @@ export function WalletConnect() {
     isConnected, 
     address, 
     isMetaMaskMobile, 
-    isConnecting, 
-    isDisconnecting
+    isConnecting
   });
 
   return (
     <div className="wallet-connect-ocean">
       <div className="wallet-connect-unified">
         {isMetaMaskMobile ? (
-          // MetaMask mobile handling
-          isConnected ? (
-            // Connected state for mobile - show disconnect option
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {/* Connected info display */}
-              <div className="connected-info">
-                <span className="hl-logo"><HyperliquidLogo /></span>
+          // MetaMask mobile handling - single button like website
+          <button
+            className="unified-btn"
+            onClick={isConnected ? () => {} : connectMetaMaskDirectly}
+            disabled={isConnecting}
+            style={{
+              minHeight: '44px',
+              touchAction: 'manipulation',
+              WebkitTapHighlightColor: 'transparent',
+            }}
+          >
+            <span className="hl-logo"><HyperliquidLogo /></span>
+            {isConnected ? (
+              <>
                 <span className="eth-balance">{balance}</span>
                 <span className="testnet-label">Testnet ETH</span>
                 <span className="account-label">
                   {address ? formatAddress(address) : 'Wallet'}
                 </span>
-              </div>
-              {/* Disconnect button */}
-              <button
-                className="disconnect-btn"
-                onClick={handleDisconnect}
-                disabled={isDisconnecting}
-                style={{
-                  minHeight: '36px',
-                  touchAction: 'manipulation',
-                  WebkitTapHighlightColor: 'transparent',
-                }}
-              >
-                {isDisconnecting ? 'Disconnecting...' : 'Disconnect'}
-              </button>
-            </div>
-          ) : (
-            // Disconnected state for mobile
-            <button
-              className="unified-btn"
-              onClick={connectMetaMaskDirectly}
-              disabled={isConnecting}
-              style={{
-                minHeight: '44px',
-                touchAction: 'manipulation',
-                WebkitTapHighlightColor: 'transparent',
-              }}
-            >
-              <span className="hl-logo"><HyperliquidLogo /></span>
+              </>
+            ) : (
               <span className="connect-label">
                 {isConnecting ? 'Connecting...' : 'Connect MetaMask'}
               </span>
-            </button>
-          )
+            )}
+          </button>
         ) : (
           // RainbowKit connection for desktop/other wallets
           <ConnectButton.Custom>
@@ -247,56 +204,6 @@ export function WalletConnect() {
           -webkit-tap-highlight-color: transparent;
           touch-action: manipulation;
         }
-        .connected-info {
-          display: flex;
-          align-items: center;
-          gap: 7px;
-          background: linear-gradient(135deg, rgba(94,231,183,0.95), rgba(178,251,224,0.95));
-          border: 2.5px solid #5ee7b7;
-          border-radius: 22px;
-          padding: 8px 16px;
-          color: #222;
-          font-weight: 700;
-          font-size: 14px;
-          box-shadow: 0 6px 32px 0 rgba(94,231,183,0.20), 0 1.5px 8px 0 rgba(33,118,174,0.10);
-          backdrop-filter: blur(10px) saturate(1.1);
-          min-width: 120px;
-          justify-content: flex-start;
-          animation: connectedGlow 2s ease-in-out infinite;
-        }
-        .disconnect-btn {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 7px;
-          background: linear-gradient(135deg, rgba(255,107,107,0.85), rgba(239,68,68,0.85));
-          border: 2px solid #fecaca;
-          border-radius: 18px;
-          padding: 6px 12px;
-          color: #222;
-          font-weight: 700;
-          font-size: 13px;
-          cursor: pointer;
-          box-shadow: 0 3px 14px 0 rgba(239,68,68,0.13), 0 1px 4px 0 rgba(33,118,174,0.10);
-          transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
-          backdrop-filter: blur(10px) saturate(1.1);
-          position: relative;
-          overflow: hidden;
-          min-width: 100px;
-          font-family: inherit;
-          user-select: none;
-          outline: none;
-          -webkit-tap-highlight-color: transparent;
-          touch-action: manipulation;
-        }
-        .disconnect-btn:hover {
-          background: linear-gradient(135deg, rgba(255,107,107,0.97), rgba(239,68,68,0.97));
-          border: 2.5px solid #ef4444;
-          box-shadow: 0 0 0 4px #fecaca55, 0 8px 32px #ef4444cc;
-        }
-        .disconnect-btn:active {
-          transform: scale(0.95);
-        }
         .unified-btn:before {
           content: '';
           position: absolute;
@@ -327,14 +234,6 @@ export function WalletConnect() {
           50% {
             transform: translateY(-5px);
             box-shadow: 0 12px 36px 0 rgba(94,231,183,0.18), 0 1.5px 8px 0 rgba(33,118,174,0.13);
-          }
-        }
-        @keyframes connectedGlow {
-          0%, 100% {
-            box-shadow: 0 6px 32px 0 rgba(94,231,183,0.20), 0 1.5px 8px 0 rgba(33,118,174,0.10);
-          }
-          50% {
-            box-shadow: 0 12px 36px 0 rgba(94,231,183,0.30), 0 1.5px 8px 0 rgba(33,118,174,0.13);
           }
         }
         .hl-logo {
@@ -409,19 +308,12 @@ export function WalletConnect() {
             right: 12px;
             top: 12px;
           }
-          .unified-btn, .connected-info {
+          .unified-btn {
             padding: 10px 14px;
             font-size: 13px;
             min-width: 100px;
             min-height: 44px;
             border-radius: 20px;
-          }
-          .disconnect-btn {
-            padding: 8px 12px;
-            font-size: 12px;
-            min-width: 90px;
-            min-height: 36px;
-            border-radius: 16px;
           }
           .hl-logo {
             width: 22px;
@@ -449,17 +341,11 @@ export function WalletConnect() {
             right: 8px;
             top: 8px;
           }
-          .unified-btn, .connected-info {
+          .unified-btn {
             padding: 8px 12px;
             font-size: 12px;
             min-width: 90px;
             min-height: 40px;
-          }
-          .disconnect-btn {
-            padding: 6px 10px;
-            font-size: 11px;
-            min-width: 80px;
-            min-height: 32px;
           }
           .hl-logo {
             width: 20px;
@@ -484,10 +370,10 @@ export function WalletConnect() {
         
         /* Touch device optimizations */
         @media (hover: none) and (pointer: coarse) {
-          .unified-btn:hover, .disconnect-btn:hover {
+          .unified-btn:hover {
             transform: none;
           }
-          .unified-btn:active, .disconnect-btn:active {
+          .unified-btn:active {
             transform: scale(0.95);
             transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
           }
